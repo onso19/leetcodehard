@@ -1,0 +1,41 @@
+class Solution {
+public:
+int maxScoreWords(vector<string> words, vector<char> letters, vector<int> score) {
+
+	// creating a frequency array to store frequency of every letter
+    vector<int> freq(26, 0);
+
+    for(auto &i : letters)
+        freq[i - 'a']++;
+    
+    return maxScoreWords(words, score, freq, 0, 0);     
+}
+
+int maxScoreWords(vector<string> &words, vector<int> &score, vector<int> freq, int i, int tmp)
+{
+	// if array is finished simply return the score made till now
+    if(i == words.size())
+        return tmp;
+    
+	// Recursive call to get the score if curr word is not included
+    int ans = maxScoreWords(words, score, freq, i + 1, tmp);
+    
+	// Checking if curr word can be included?
+	// if in any case frequency of any letter is 0 then we can't include this word
+    int tp = 0, n = words[i].size(), j;
+    for(j = 0; j < n; j++)
+    {
+        if(!freq[words[i][j] - 'a'])
+            break;
+        
+        freq[words[i][j] - 'a']--, tp += score[words[i][j] - 'a'];
+    }
+ 
+	 // if j == n then it means the whole word is traversed and there was sufficient frequency of every letter to include this word
+    if(j == n)
+		// taking the maximum of previous ans without including the curr word and with including the curr word
+        ans = max(maxScoreWords(words, score, freq, i + 1, tmp + tp), ans);
+
+    return ans;
+}
+};
